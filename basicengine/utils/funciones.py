@@ -34,9 +34,9 @@ class ClaseEngine():
         self.csv_path_pyspark = OUTPUT_PATH + 'cuadrante_planuno/'
 
     def read_data(self):
-        self.df_plauno = self.dataproc.read().parquet(self.ruta1)
-        self.df_customers = self.dataproc.read().parquet(self.ruta2)
-        self.df_bajas = self.dataproc.read().parquet(self.ruta3)
+        self.df_plauno = self.dataproc.read.parquet(self.ruta1)
+        self.df_customers = self.dataproc.read.parquet(self.ruta2)
+        self.df_bajas = self.dataproc.read.parquet(self.ruta3)
 
         self.planuno_2020 = self.df_plauno.filter(F.col("date_alta") < "2021-01-01")
         self.planuno_2021 = self.df_plauno.filter(F.col("date_alta") >= "2021-01-01")
@@ -156,10 +156,11 @@ class ClaseEngine():
         )
 
     def to_csv(self):
-        self.dataproc.write() \
+        self.df_riesgo.coalesce(1) \
+            .write \
             .option("partitionOverwriteMode", "dynamic") \
             .mode("overwrite") \
-            .parquet(self.df_riesgo.coalesce(1), self.csv_path_pyspark)
+            .parquet(self.csv_path_pyspark)
 
     def run(self):
         self.read_data()
