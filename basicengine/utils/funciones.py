@@ -1,4 +1,4 @@
-from dataproc_sdk.dataproc_sdk_datiopysparksession.datiopysparksession import DatioPysparkSession
+from pyspark.sql import SparkSession
 import pandas as pd
 import numpy as np
 import os
@@ -6,7 +6,6 @@ import re
 import random
 from datetime import datetime, timedelta
 import string
-from google.colab import drive
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql import functions as F
@@ -18,13 +17,19 @@ from functools import reduce
 
 class ClaseEngine():
     def __init__(self, OUTPUT_PATH):
-        self.dataproc = DatioPysparkSession().get_or_create()
+        self.dataproc = (
+            SparkSession.builder
+            .appName("basicengine")
+            .getOrCreate()
+        )
         
         self.OUTPUT_PATH = OUTPUT_PATH
         
-        self.ruta1 = '/content/drive/MyDrive/Laboratorios/PySpark/Casos de uso/1. Básico/Caso de Uso 3/2.input/planuno/'
-        self.ruta2 = '/content/drive/MyDrive/Laboratorios/PySpark/Casos de uso/1. Básico/Caso de Uso 3/2.input/customers_ba/'
-        self.ruta3 = '/content/drive/MyDrive/Laboratorios/PySpark/Casos de uso/1. Básico/Caso de Uso 3/2.input/bajas2021/'
+        base_path = os.path.join(os.getcwd(), "data")
+
+        self.ruta1 = os.path.join(base_path, "planuno")
+        self.ruta2 = os.path.join(base_path, "customers_ba")
+        self.ruta3 = os.path.join(base_path, "bajas2021")
 
         self.csv_path_pyspark = OUTPUT_PATH + 'cuadrante_planuno/'
 
