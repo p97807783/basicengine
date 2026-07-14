@@ -127,11 +127,34 @@ class ClaseEngine():
             )
         )
 
+    def get_riesgo_cliente(self):
+        df = self.df
+
+        self.df_riesgo = (
+            df.withColumn(
+                "riesgo_cliente",
+                F.when(F.col("bajas") == 1, "ALTO")
+                 .when(
+                     (F.col("diferencia_dias") > 365) &
+                     (F.col("planuno_quadrant_name") == "Transaccional"),
+                     "MEDIO"
+                 )
+                 .when(F.col("Exclusivos_3d3") == "Exclusivos_3d3", "BAJO")
+                 .otherwise("BAJO")
+            )
+            .withColumn(
+                "score_riesgo",
+                F.when(F.col("riesgo_cliente") == "ALTO", 3)
+                 .when(F.col("riesgo_cliente") == "MEDIO", 2)
+                 .otherwise(1)
+            )
+        )
+
     def to_csv(self):
         self.dataproc.write() \
             .option("partitionOverwriteMode", "dynamic") \
             .mode("overwrite") \
-            .parquet(self.df_cuadrante_planuno.coalesce(1), self.csv_path_pyspark)
+            .parquet(self.df_riesgo.coalesce(1), self.csv_path_pyspark)
 
     def run(self):
         self.read_data()
@@ -141,4 +164,5 @@ class ClaseEngine():
         self.get_clasificacion()
         self.get_union()
         self.get_cuadrante()
+        self.get_riesgo_cliente()
         self.to_csv()

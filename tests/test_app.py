@@ -145,3 +145,39 @@ def test_get_cuadrante(spark):
     assert res[1] == "BAJAS"
     assert res[2] == "3d3"
     assert res[3] == "Básico"
+
+def test_get_riesgo_cliente(spark):
+    engine = ClaseEngine("/tmp/")
+
+    engine.df = spark.createDataFrame([
+        # ALTO (bajas = 1)
+        (1, "Transaccional", "Exclusivos_3d3", 1, 10),
+
+        # MEDIO (diferencia_dias > 365 y Transaccional)
+        (2, "Transaccional", "Otros", 0, 400),
+
+        # BAJO (Exclusivos_3d3)
+        (3, "Básico", "Exclusivos_3d3", 0, 10),
+
+        # BAJO default
+        (4, "Básico", "Otros", 0, 10),
+    ], [
+        "customer_id",
+        "planuno_quadrant_name",
+        "Exclusivos_3d3",
+        "bajas",
+        "diferencia_dias"
+    ])
+
+    engine.get_riesgo_cliente()
+
+    df = engine.df_riesgo.collect()
+    res = {
+        r.customer_id: (r.riesgo_cliente, r.score_riesgo)
+        for r in df
+    }
+
+    assert res[1] == ("ALTO", 3)
+    assert res[2] == ("MEDIO", 2)
+    assert res[3] == ("BAJO", 1)
+    assert res[4] == ("BAJO", 1)
