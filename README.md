@@ -53,7 +53,3 @@ Se está preparando una mejora en la documentación del engine.
 ### Objetivo
 
 Practicar operaciones intermedias de Git sobre el engine.
-
-### Configuración temporal incorrecta
-
-El engine debe ejecutarse siempre con datos de producción.
