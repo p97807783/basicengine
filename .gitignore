@@ -1,3 +1,4 @@
-data/
+﻿data/
 basicengine/*example.py
 tests/*example.py
+output/
