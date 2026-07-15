@@ -46,3 +46,10 @@ treeView-beta
 - __kaafile__ y __setup_cfg__: Son ficheros de configuración del proyecto que contienen información sobre la instalación y configuración del mismo
 - __requirements.txt__ y __requirements_dev.txt__: Contienen las dependencias del engine con otros módulos o librerías externas. En el dev se encuentras las dependencias para correr los test
 - __readme.md__: Fichero readme para la descripción del proyecto, proporcionando una visión general y guía de uso. 
+## Caso intermedio en desarrollo
+
+Se está preparando una mejora en la documentación del engine.
+
+### Objetivo
+
+Practicar operaciones intermedias de Git sobre el engine.
