@@ -13,6 +13,7 @@ from pyspark.sql.window import Window
 from pyspark.sql.utils import AnalysisException
 from pyspark.sql import types as T
 from functools import reduce
+from pathlib import Path
 
 
 class ClaseEngine():
@@ -25,13 +26,14 @@ class ClaseEngine():
         
         self.OUTPUT_PATH = OUTPUT_PATH
         
-        base_path = os.path.join(os.getcwd(), "data")
+        base_path = Path(__file__).resolve().parent.parent.parent
+        base_path = base_path / "data" / "input"
 
         self.ruta1 = os.path.join(base_path, "planuno")
         self.ruta2 = os.path.join(base_path, "customers_ba")
         self.ruta3 = os.path.join(base_path, "bajas2021")
 
-        self.csv_path_pyspark = OUTPUT_PATH + 'cuadrante_planuno/'
+        self.csv_path_pyspark = os.path.join(OUTPUT_PATH, "cuadrante_planuno")
 
     def read_data(self):
         self.df_plauno = self.dataproc.read.parquet(self.ruta1)
@@ -156,19 +158,46 @@ class ClaseEngine():
         )
 
     def to_csv(self):
+        import os
+
+        ruta_absoluta = os.path.abspath(self.csv_path_pyspark)
+
+        # print("Ruta relativa:", self.csv_path_pyspark)
+        # print("Ruta absoluta:", ruta_absoluta)
+
         self.df_riesgo.coalesce(1) \
             .write \
-            .option("partitionOverwriteMode", "dynamic") \
             .mode("overwrite") \
-            .parquet(self.csv_path_pyspark)
+            .parquet(ruta_absoluta)
+
+        print("WRITE OK")
 
     def run(self):
+        print("1. read_data")
         self.read_data()
+
+        print("2. get_base")
         self.get_base()
+
+        print("3. get_antiguedad")
         self.get_antiguedad()
+
+        print("4. get_refundidos")
         self.get_refundidos()
+
+        print("5. get_clasificacion")
         self.get_clasificacion()
+
+        print("6. get_union")
         self.get_union()
+
+        print("7. get_cuadrante")
         self.get_cuadrante()
+
+        print("8. get_riesgo_cliente")
         self.get_riesgo_cliente()
+
+        print("9. to_csv")
         self.to_csv()
+
+        print("10. terminado")
