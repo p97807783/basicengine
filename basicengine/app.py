@@ -1,5 +1,5 @@
 from typing import Dict 
-from dataproc_sdk.dataproc_sdk_utils.logging import get_user_logger
+import logging
 from basicengine.utils.funciones import ClaseEngine
 
 
@@ -12,7 +12,7 @@ class DataprocExperiment:
         """ 
         Constructor 
         """ 
-        self.logger = get_user_logger(DataprocExperiment.__qualname__) 
+        self.logger = logging.getLogger(DataprocExperiment.__qualname__) 
     
     def run(self, **parameters: Dict) -> None: 
         """ 
